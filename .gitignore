@@ -1,0 +1,18 @@
+# General
+*~
+*.dll
+*.log
+*.so
+*.swp
+*.000
+*.bak
+*.bck
+*.tmp
+
+# macOS
+.DS_Store
+
+# Nix
+.direnv
+.pre-commit-config.yaml
+result

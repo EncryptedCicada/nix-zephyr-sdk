@@ -1,0 +1,14 @@
+---
+name: Install Nix
+description: Install Nix package manager using the Determinante Systems installer
+runs:
+  using: composite
+  steps:
+    - uses: https://github.com/DeterminateSystems/nix-installer-action@v4
+      with:
+        init: none
+        planner: linux
+        github-token: ${{ secrets.GH_TOKEN }}
+        extra-conf: |
+          accept-flake-config = true
+          experimental-features = nix-command flakes recursive-nix
