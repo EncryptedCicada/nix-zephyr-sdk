@@ -25,8 +25,12 @@ with self.packages.${system};
       ncurses
       ninja
 
-      # # Zephyr
-      python310Packages.west
+      # Zephyr
+      (python310.withPackages (ps:
+        with ps; [
+          west
+          pyelftools
+        ]))
       zephyr-sdk
 
       # ESP
