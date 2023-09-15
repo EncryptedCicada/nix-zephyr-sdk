@@ -90,7 +90,7 @@ in
     '';
 
     patchPhase = ''
-         patchShebangs .
+      patchShebangs .
 
       substituteInPlace cmake/zephyr/host-tools.cmake \
       	--replace "/usr/share" "/share"								\
@@ -118,6 +118,7 @@ in
 
       # add zephyr-sdk cmake modules
       mv ./cmake $out/lib/cmake
+      mv ./sdk_* $out/lib
 
       # add zephyr-sdk cross compilers
       mv ./*zephyr*/bin/* $out/bin/
