@@ -91,13 +91,6 @@ in
 
     patchPhase = ''
       patchShebangs .
-
-      substituteInPlace cmake/zephyr/host-tools.cmake \
-      	--replace "/usr/share" "/share"								\
-      	--replace "/sysroots/\*-pokysdk-linux" ""
-
-      substituteInPlace cmake/Zephyr-sdkConfig.cmake \
-      	--replace ".. ABSOLUTE" "../.. ABSOLUTE"
     '';
 
     dontConfigure = true;
@@ -106,25 +99,8 @@ in
     installPhase = ''
       runHook preInstall
 
-      mkdir -p $out/{share,lib}
-
-      # remove deprecated symbolic links
-      find ./sysroots/$(uname -m)-pokysdk-linux/usr/bin -type l -exec unlink {} \;
-
-      # add zephyr-sdk standalone hosttools
-      mv ./sysroots/$(uname -m)-pokysdk-linux/usr/{bin,libexec,share} $out/
-      mv ./sysroots/$(uname -m)-pokysdk-linux/usr/synopsys/bin/qemu-system-* $out/bin/
-      mv ./sysroots/$(uname -m)-pokysdk-linux/usr/xilinx/bin/qemu-system-aarch64 \
-      		$out/bin/qemu-system-xilinx-aarch64
-      mv ./sysroots/$(uname -m)-pokysdk-linux/usr/xilinx/bin/qemu-system-microblazeel \
-      		$out/bin/qemu-system-xilinx-microblazeel
-
-      # add zephyr-sdk cmake modules
-      mv ./cmake $out/lib/cmake
-      mv ./sdk_* $out/lib
-
-      # add zephyr-sdk cross compilers
-      mv ./*zephyr*/bin/* $out/bin/
+      mkdir -p $out
+      mv * $out
 
       runHook postInstall
     '';
