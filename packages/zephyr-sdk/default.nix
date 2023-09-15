@@ -95,6 +95,9 @@ in
       substituteInPlace cmake/zephyr/host-tools.cmake \
       	--replace "/usr/share" "/share"								\
       	--replace "/sysroots/\*-pokysdk-linux" ""
+
+      substituteInPlace cmake/Zephyr-sdkConfig.cmake \
+      	--replace ".. ABSOLUTE" "../.. ABSOLUTE"
     '';
 
     dontConfigure = true;
