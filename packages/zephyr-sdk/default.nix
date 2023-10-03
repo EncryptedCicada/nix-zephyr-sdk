@@ -91,6 +91,14 @@ in
 
     patchPhase = ''
       patchShebangs .
+
+      substituteInPlace cmake/zephyr/host-tools.cmake \
+        --replace "/usr/share" "/share"								\
+        --replace "/sysroots/\*-pokysdk-linux" ""
+
+      sed '/SYSROOT_DIR/d' cmake/zephyr/target.cmake
+      sed '/CROSS_COMPILE/d' cmake/zephyr/target.cmake
+
     '';
 
     dontConfigure = true;
@@ -99,8 +107,20 @@ in
     installPhase = ''
       runHook preInstall
 
-      mkdir -p $out
-      mv * $out
+      mkdir -p $out/{share,lib}
+
+      find ./sysroots/$(uname -m)-pokysdk-linux/usr/bin -type l -exec unlink {} \;
+
+      mv ./sysroots/$(uname -m)-pokysdk-linux/usr/{bin,libexec,share} $out/
+      mv ./sysroots/$(uname -m)-pokysdk-linux/usr/synopsys/bin/qemu-system-* $out/bin/
+      mv ./sysroots/$(uname -m)-pokysdk-linux/usr/xilinx/bin/qemu-system-aarch64 \
+      		$out/bin/qemu-system-xilinx-aarch64
+      mv ./sysroots/$(uname -m)-pokysdk-linux/usr/xilinx/bin/qemu-system-microblazeel \
+      		$out/bin/qemu-system-xilinx-microblazeel
+
+      mv ./cmake $out
+      mv ./*zephyr* $out
+      mv ./sdk_* $out
 
       runHook postInstall
     '';
