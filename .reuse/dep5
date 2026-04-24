@@ -1,17 +1,17 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: nix-zephyr-sdk
-Upstream-Contact: Sebastian Wendel <nix-zephyr-sdk@srx.dev>
-Source: https://code.srx.dev/srx/nix-zephyr-sdk
+Upstream-Contact: Varnit Singh <dev.varnit@gmail.com>
+Source: https://github.com/EncryptedCicada/nix-zephyr-sdk
 
 Files:
   .gitignore
   .editorconfig
   .envrc
-  .gitea
+  .github/**
   packages/*
   shells/*
   *.lock
   *.nix
   *.md
-Copyright: 2023 Sebastian Wendel <nix-zephyr-sdk@srx.dev>
+Copyright: 2026 Varnit Singh <dev.varnit@gmail.com>
 License: MIT

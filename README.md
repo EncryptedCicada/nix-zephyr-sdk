@@ -31,12 +31,38 @@ To use this flake in your own project:
 {
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
-    zephyr-sdk.url = "git+https://code.srx.dev/srx/nix-zephyr-sdk";
+    zephyr-sdk.url = "github:EncryptedCicada/nix-zephyr-sdk";
   };
 
   outputs = { self, zephyr-sdk, nixpkgs }: {
-    devShells.default = zephyr-sdk.devShells.zephyr;
+    devShells.default = zephyr-sdk.devShells.${builtins.currentSystem}.zephyr;
   };
+}
+```
+
+### Choosing Toolchain Variant
+
+This flake exposes Zephyr shells for both toolchain variants:
+
+- `devShells.<system>.zephyr` (default package, uses gnu)
+- `devShells.<system>.zephyr-gnu`
+- `devShells.<system>.zephyr-llvm`
+
+Example downstream usage:
+
+```nix
+{
+  inputs = {
+    nixpkgs.url = "nixpkgs/nixos-unstable";
+    zephyr-sdk.url = "github:EncryptedCicada/nix-zephyr-sdk";
+  };
+
+  outputs = { self, nixpkgs, zephyr-sdk, ... }:
+    let
+      system = "x86_64-linux";
+    in {
+      devShells.${system}.default = zephyr-sdk.devShells.${system}.zephyr-llvm;
+    };
 }
 ```
 
@@ -45,8 +71,10 @@ To use this flake in your own project:
 To install the Zephyr SDK globally:
 
 ```sh
-nix profile install git+https://code.srx.dev/srx/nix-zephyr-sdk
+nix profile install github:EncryptedCicada/nix-zephyr-sdk
 ```
+
+or append the uri with `#zephyr-gnu` or `#zephyr-llvm` to use the corresponding toolchain.
 
 ## Usage
 

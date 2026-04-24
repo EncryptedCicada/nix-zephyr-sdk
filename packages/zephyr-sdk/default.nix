@@ -12,6 +12,8 @@
   cmake,
   dtc,
   fetchurl,
+  file,
+  findutils,
   glib,
   glibcLocales,
   lib,
@@ -22,37 +24,42 @@
   unzip,
   which,
   xz,
+  toolchain_provider ? "gnu",
   ...
 }: let
-  hosttools.version = "0.9";
+  hosttools.version = "0.10";
 in
   stdenv.mkDerivation rec {
     pname = "zephyr-sdk";
-    version = "0.16.1";
+    version = "1.0.1";
 
     src = let
-      getHash = arch:
+      getHash = toolchain: arch:
         {
-          "linux-x86_64" = "sha256-UTONUapM6iUWZBzg2dwLUbdjd58A3EVkorwN1xPfIsc=";
-          "linux-aarch64" = "sha256-BiuytcR8pW3Sm3+S3X8Hpc4iulE3WdK2lgvGWFMesAw=";
-          "macos-x86_64" = "sha256-sEbHviuQ7qMPH9kHr+DwgCFnAw62NWCxKfJj2aV1Tdo=";
-          "macos-aarch64" = "sha256-Vf/Gtzdv21x7+20zyEYEnmwPitYmL4ZClPxC1AWbGiY=";
-        }
-        .${arch};
+          gnu = {
+            "linux-x86_64" = "sha256-N6jFtVacK0gtOQmcZf492sTkNSSZbHMZB+Hp9YGMu6c=";
+            "linux-aarch64" = "sha256-bjgBj3CvXpDBjMBML4rFqRyZ9VWbJWktGw3jKMPtuIo=";
+            "macos-aarch64" = "sha256-PcY0aliI67zuGYAb9icWJ/BIGXeP4O88fzx1KOj07yo=";
+          };
+          llvm = {
+            "linux-x86_64" = "sha256-E7liMMkAJRBeyb3JFLHMtsSzGfaKRFGOxOhu8pPz3Og=";
+            "linux-aarch64" = "sha256-6mGi90iEbAmxpOO3CPbce5ehTI0zVSPC0EpRMzfqDP8=";
+            "macos-aarch64" = "sha256-tN7xZieGSSXTWXHWEerT7+iAiQ+KjR9XMkRKl31Y/5o=";
+          };
+        }.${toolchain}.${arch};
       getArch =
         {
           "x86_64-linux" = "linux-x86_64";
           "aarch64-linux" = "linux-aarch64";
-          "x86_64-darwin" = "macos-x86_64";
           "aarch64-darwin" = "macos-aarch64";
         }
         .${stdenv.system}
         or (throw "${pname}-${version}: ${stdenv.system} is unsupported.");
-      getUrl = arch: "https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v${version}/${pname}-${version}_${arch}.tar.xz";
+      getUrl = arch: "https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v${version}/${pname}-${version}_${arch}_${toolchain_provider}.tar.xz";
     in
       fetchurl {
         url = getUrl getArch;
-        sha256 = getHash getArch;
+        sha256 = getHash toolchain_provider getArch;
       };
 
     nativeBuildInputs = [
@@ -64,6 +71,8 @@ in
       unzip
       which
       xz
+      file
+      findutils
     ];
 
     buildInputs = [
@@ -77,12 +86,12 @@ in
       libxml2
       nettle
       pixman
-      python38
+      python3
       readline
     ];
 
     postUnpack = ''
-      $sourceRoot/zephyr-sdk-$(uname -m)-hosttools-standalone-${hosttools.version}.sh \
+      $sourceRoot/hosttools/zephyr-sdk-$(uname -m)-hosttools-standalone-${hosttools.version}.sh \
       			-y -p -d $sourceRoot
 
       rm -f $sourceRoot/{setup,zephyr-sdk-$(uname -m)-hosttools-standalone-*}.sh \
@@ -96,8 +105,8 @@ in
         --replace "/usr/share" "/share"								\
         --replace "/sysroots/\*-pokysdk-linux" ""
 
-      sed '/SYSROOT_DIR/d' cmake/zephyr/target.cmake
-      sed '/CROSS_COMPILE/d' cmake/zephyr/target.cmake
+      sed '/SYSROOT_DIR/d' cmake/zephyr/*/target.cmake
+      sed '/CROSS_COMPILE/d' cmake/zephyr/*/target.cmake
 
     '';
 
@@ -131,6 +140,6 @@ in
       description = "Zephyr SDK (Toolchains, Development Tools)";
       homepage = "https://github.com/zephyrproject-rtos/sdk-ng/";
       license = licenses.asl20;
-      platforms = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
+      platforms = ["x86_64-linux" "aarch64-linux" "aarch64-darwin"];
     };
   }

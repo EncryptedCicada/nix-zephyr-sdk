@@ -24,7 +24,6 @@
   } @ inputs:
     flake-utils.lib.eachSystem [
       "x86_64-linux"
-      "x86_64-darwin"
       "aarch64-linux"
       "aarch64-darwin"
     ] (system: {
@@ -35,11 +34,15 @@
 
       packages = {
         zephyr-sdk = self.pkgs.${system}.callPackage ./packages/zephyr-sdk inputs;
+        zephyr-sdk-gnu = self.packages.${system}.zephyr-sdk.override { toolchain_provider = "gnu"; };
+        zephyr-sdk-llvm = self.packages.${system}.zephyr-sdk.override { toolchain_provider = "llvm"; };
         default = self.packages.${system}.zephyr-sdk;
       };
 
       devShells = {
-        zephyr = import ./shells/zephyr.nix inputs system;
+        zephyr = import ./shells/zephyr.nix inputs system self.packages.${system}.zephyr-sdk;
+        zephyr-gnu = import ./shells/zephyr.nix inputs system self.packages.${system}.zephyr-sdk-gnu;
+        zephyr-llvm = import ./shells/zephyr.nix inputs system self.packages.${system}.zephyr-sdk-llvm;
         nix = import ./shells/nix.nix inputs system;
         default = self.devShells.${system}.nix;
       };

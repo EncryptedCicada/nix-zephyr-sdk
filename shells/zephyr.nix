@@ -1,6 +1,5 @@
-{self, ...}: system:
+{self, ...}: system: zephyrSdk:
 with self.pkgs.${system};
-with self.packages.${system};
   mkShell {
     name = "zephyr-dev";
     buildInputs = [
@@ -26,12 +25,12 @@ with self.packages.${system};
       ninja
 
       # Zephyr
-      (python310.withPackages (ps:
+      (python3.withPackages (ps:
         with ps; [
           west
           pyelftools
         ]))
-      zephyr-sdk
+      zephyrSdk
 
       # ESP
       espup
