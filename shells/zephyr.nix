@@ -20,7 +20,7 @@ with self.pkgs.${system};
       gperf
       gtest
       libffi
-      libusb
+      libusb1
       ncurses
       ninja
 

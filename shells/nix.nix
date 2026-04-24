@@ -7,7 +7,6 @@ with self.pkgs.${system};
       deadnix
       git
       nil
-      nixUnstable
       pre-commit
       reuse
       statix

@@ -7,7 +7,6 @@
   libusb1,
   libxml2,
   pixman,
-  python38,
   readline,
   cmake,
   dtc,
@@ -34,40 +33,39 @@ in
     version = "1.0.1";
 
     src = let
-      getHash = toolchain: arch:
-        {
-          gnu = {
-            "linux-x86_64" = "sha256-N6jFtVacK0gtOQmcZf492sTkNSSZbHMZB+Hp9YGMu6c=";
-            "linux-aarch64" = "sha256-bjgBj3CvXpDBjMBML4rFqRyZ9VWbJWktGw3jKMPtuIo=";
-            "macos-aarch64" = "sha256-PcY0aliI67zuGYAb9icWJ/BIGXeP4O88fzx1KOj07yo=";
-          };
-          llvm = {
-            "linux-x86_64" = "sha256-E7liMMkAJRBeyb3JFLHMtsSzGfaKRFGOxOhu8pPz3Og=";
-            "linux-aarch64" = "sha256-6mGi90iEbAmxpOO3CPbce5ehTI0zVSPC0EpRMzfqDP8=";
-            "macos-aarch64" = "sha256-tN7xZieGSSXTWXHWEerT7+iAiQ+KjR9XMkRKl31Y/5o=";
-          };
-        }.${toolchain}.${arch};
-      getArch =
-        {
-          "x86_64-linux" = "linux-x86_64";
-          "aarch64-linux" = "linux-aarch64";
-          "aarch64-darwin" = "macos-aarch64";
-        }
-        .${stdenv.system}
-        or (throw "${pname}-${version}: ${stdenv.system} is unsupported.");
-      getUrl = arch: "https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v${version}/${pname}-${version}_${arch}_${toolchain_provider}.tar.xz";
-    in
-      fetchurl {
-        url = getUrl getArch;
-        sha256 = getHash toolchain_provider getArch;
+      arch = {
+        x86_64-linux = "linux-x86_64";
+        aarch64-linux = "linux-aarch64";
+        aarch64-darwin = "macos-aarch64";
+      }.${stdenv.system}
+        or (throw "${pname}-${version}: unsupported system ${stdenv.system}");
+
+      hashes = {
+        gnu = {
+          linux-x86_64 = "sha256-N6jFtVacK0gtOQmcZf492sTkNSSZbHMZB+Hp9YGMu6c=";
+          linux-aarch64 = "sha256-bjgBj3CvXpDBjMBML4rFqRyZ9VWbJWktGw3jKMPtuIo=";
+          macos-aarch64 = "sha256-PcY0aliI67zuGYAb9icWJ/BIGXeP4O88fzx1KOj07yo=";
+        };
+        llvm = {
+          linux-x86_64 = "sha256-E7liMMkAJRBeyb3JFLHMtsSzGfaKRFGOxOhu8pPz3Og=";
+          linux-aarch64 = "sha256-6mGi90iEbAmxpOO3CPbce5ehTI0zVSPC0EpRMzfqDP8=";
+          macos-aarch64 = "sha256-tN7xZieGSSXTWXHWEerT7+iAiQ+KjR9XMkRKl31Y/5o=";
+        };
       };
+
+      url = "https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v${version}/${pname}-${version}_${arch}_${toolchain_provider}.tar.xz";
+    in
+    fetchurl {
+      inherit url;
+      sha256 = hashes.${toolchain_provider}.${arch};
+    };
 
     nativeBuildInputs = [
       autoPatchelfHook
       glib
       glibcLocales
       libfaketime
-      python3.pythonForBuild
+      python3
       unzip
       which
       xz
@@ -82,7 +80,7 @@ in
       gnutls
       hidapi
       libftdi1
-      libusb
+      libusb1
       libxml2
       nettle
       pixman
