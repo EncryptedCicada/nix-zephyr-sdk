@@ -4,7 +4,7 @@
   gnutls,
   hidapi,
   libftdi1,
-  libusb,
+  libusb1,
   libxml2,
   pixman,
   python38,
