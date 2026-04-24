@@ -34,8 +34,8 @@
 
       packages = {
         zephyr-sdk = self.pkgs.${system}.callPackage ./packages/zephyr-sdk inputs;
-        zephyr-sdk-gnu = self.packages.${system}.zephyr-sdk.override { toolchain_provider = "gnu"; };
-        zephyr-sdk-llvm = self.packages.${system}.zephyr-sdk.override { toolchain_provider = "llvm"; };
+        zephyr-sdk-gnu = self.packages.${system}.zephyr-sdk.override {toolchain_provider = "gnu";};
+        zephyr-sdk-llvm = self.packages.${system}.zephyr-sdk.override {toolchain_provider = "llvm";};
         default = self.packages.${system}.zephyr-sdk;
       };
 

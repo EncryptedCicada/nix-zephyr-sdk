@@ -33,11 +33,14 @@ in
     version = "1.0.1";
 
     src = let
-      arch = {
-        x86_64-linux = "linux-x86_64";
-        aarch64-linux = "linux-aarch64";
-        aarch64-darwin = "macos-aarch64";
-      }.${stdenv.system}
+      arch =
+        {
+          x86_64-linux = "linux-x86_64";
+          aarch64-linux = "linux-aarch64";
+          aarch64-darwin = "macos-aarch64";
+        }.${
+          stdenv.system
+        }
         or (throw "${pname}-${version}: unsupported system ${stdenv.system}");
 
       hashes = {
@@ -55,10 +58,10 @@ in
 
       url = "https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v${version}/${pname}-${version}_${arch}_${toolchain_provider}.tar.xz";
     in
-    fetchurl {
-      inherit url;
-      sha256 = hashes.${toolchain_provider}.${arch};
-    };
+      fetchurl {
+        inherit url;
+        sha256 = hashes.${toolchain_provider}.${arch};
+      };
 
     nativeBuildInputs = [
       autoPatchelfHook
