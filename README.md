@@ -1,5 +1,9 @@
 # Nix Zephyr SDK
 
+> [!CAUTION]
+> I've made a new flake with an updated version of the sdk at https://github.com/EncryptedCicada/zephyr-sdk-nix-flake
+> & it is recommended to use that
+
 [Nix Flake](https://zero-to-nix.com/concepts/flakes) Collection for [Zephyr SDK](https://docs.zephyrproject.org/latest/develop/toolchains/zephyr_sdk.html) Toolchain
 
 ## Description
